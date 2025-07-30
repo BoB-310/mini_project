@@ -90,19 +90,19 @@
             </div>
             <div class="input-group">
                 <label for="prev_sem_1">Last Semester Score (%):</label>
-                <input type="number" id="prev_sem_1" name="prev_sem_1_score" required>
+                <input type="number" id="prev_sem_1" name="prev_sem_1_score" min="0" max="100" required>
             </div>
             <div class="input-group">
                 <label for="prev_sem_2">Semester Before Last Score (%):</label>
-                <input type="number" id="prev_sem_2" name="prev_sem_2_score" required>
+                <input type="number" id="prev_sem_2" name="prev_sem_2_score" min="0" max="100" required>
             </div>
             <div class="input-group">
                 <label for="study_hours">How many hours do you study per day:</label>
-                <input type="number" id="study_hours" name="study_hours" step="0.5" required>
+                <input type="number" id="study_hours" name="study_hours" step="0.5" min="0" max="24" required>
             </div>
             <div class="input-group">
                 <label for="attendance"> Your Attendance (%):</label>
-                <input type="number" id="attendance" name="attendance" required>
+                <input type="number" id="attendance" name="attendance" min="0" max="100" required>
             </div>
             <button type="submit">Predict My Score</button>
         </form>

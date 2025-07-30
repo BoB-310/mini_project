@@ -1,5 +1,4 @@
-# We need redirect and url_for to send the user back to the main page
-from flask import Flask, request, render_template, redirect, url_for
+from flask import Flask, request, render_template
 import joblib
 import numpy as np
 
@@ -15,25 +14,39 @@ except FileNotFoundError:
 def home():
     return render_template('index.html')
 
-# --- THIS IS THE UPDATED PART ---
-# The /predict route now accepts both POST and GET methods
-@app.route('/predict', methods=['POST', 'GET'])
+@app.route('/predict', methods=['POST'])
 def predict():
-    # If the request is a POST, it means the form was submitted.
-    if request.method == 'POST':
-        try:
-            form_data = [float(x) for x in request.form.values()]
-            prediction = model.predict([form_data])
-            score = round(prediction[0], 2)
-            return render_template('result.html', score=score)
-        except Exception as e:
-            print(f"An error occurred: {e}")
-            return "An error occurred. Please go back and try again."
-    
-    # If the request is a GET, it means someone refreshed the page.
-    # We will redirect them back to the main form page ('home').
-    else:
-        return redirect(url_for('home'))
+    try:
+        # 1. Read the data from the form and convert to numbers
+        target_sem = float(request.form['target_semester'])
+        prev_sem_1 = float(request.form['prev_sem_1_score'])
+        prev_sem_2 = float(request.form['prev_sem_2_score'])
+        study_hours = float(request.form['study_hours'])
+        attendance = float(request.form['attendance'])
+
+        # 2. --- THIS IS THE NEW VALIDATION BLOCK ---
+        # Check if the numbers are within a logical range
+        if not (0 <= prev_sem_1 <= 100 and
+                0 <= prev_sem_2 <= 100 and
+                0 <= study_hours <= 24 and
+                0 <= attendance <= 100):
+            # If any value is out of range, return an error message
+            return "Invalid input. Please go back and enter values within the correct range (e.g., scores 0-100, hours 0-24)."
+
+        # 3. If data is valid, proceed with prediction
+        features = [target_sem, prev_sem_1, prev_sem_2, study_hours, attendance]
+        prediction = model.predict([features])
+        score = round(prediction[0], 2)
+
+        # 4. Render the result page
+        return render_template('result.html', score=score)
+
+    except ValueError:
+        # This will catch errors if the user enters text instead of numbers
+        return "Invalid input. Please enter numbers only."
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return "An unexpected error occurred. Please try again."
 
 if __name__ == '__main__':
     print("--- Server is starting... ---")
