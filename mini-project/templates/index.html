@@ -58,33 +58,18 @@
         button:hover {
             background-color: #0069d9;
         }
-        #result {
-            margin-top: 1.5rem;
-            padding: 1rem;
-            border-radius: 8px;
-            font-size: 1.2rem;
-            font-weight: bold;
-            display: none; /* Hidden by default */
-        }
-        .success {
-            background-color: #e9f5e9;
-            color: #2b642b;
-            display: block;
-        }
-        .error {
-            background-color: #f8d7da;
-            color: #721c24;
-            display: block;
-        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Semester Score Predictor</h1>
-        <form id="prediction-form">
+        
+        <!-- The form now sends data directly to our Python server -->
+        <form action="/predict" method="POST">
             <div class="input-group">
                 <label for="target_semester">Which semester do you want to predict?</label>
-                <select id="target_semester" required>
+                <!-- The 'name' attribute is very important for the server to read the data -->
+                <select id="target_semester" name="target_semester" required>
                     <option value="3">3rd Semester</option>
                     <option value="4">4th Semester</option>
                     <option value="5">5th Semester</option>
@@ -95,69 +80,23 @@
             </div>
             <div class="input-group">
                 <label for="prev_sem_1">Previous Semester Score (%):</label>
-                <input type="number" id="prev_sem_1" required>
+                <input type="number" id="prev_sem_1" name="prev_sem_1_score" required>
             </div>
             <div class="input-group">
                 <label for="prev_sem_2">Score Two Semesters Ago (%):</label>
-                <input type="number" id="prev_sem_2" required>
+                <input type="number" id="prev_sem_2" name="prev_sem_2_score" required>
             </div>
             <div class="input-group">
                 <label for="study_hours">Planned Study Hours Per Day:</label>
-                <input type="number" id="study_hours" step="0.5" required>
+                <input type="number" id="study_hours" name="study_hours" step="0.5" required>
             </div>
             <div class="input-group">
                 <label for="attendance">Expected Attendance (%):</label>
-                <input type="number" id="attendance" required>
+                <input type="number" id="attendance" name="attendance" required>
             </div>
             <button type="submit">Predict My Score</button>
         </form>
-        <div id="result"></div>
     </div>
-
-    <script>
-        const form = document.getElementById('prediction-form');
-        const resultDiv = document.getElementById('result');
-
-        form.addEventListener('submit', function(event) {
-            event.preventDefault();
-
-            const data = {
-                target_semester: document.getElementById('target_semester').value,
-                prev_sem_1_score: document.getElementById('prev_sem_1').value,
-                prev_sem_2_score: document.getElementById('prev_sem_2').value,
-                study_hours: document.getElementById('study_hours').value,
-                attendance: document.getElementById('attendance').value
-            };
-
-            // --- THIS IS THE UPDATED PART ---
-            fetch('http://127.0.0.1:5000/predict', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data)
-            })
-            .then(response => {
-                // First, check if the response from the server is OK (status 200)
-                if (!response.ok) {
-                    // If not OK, create an error to be caught by the .catch block
-                    throw new Error('Network response was not ok');
-                }
-                // If it is OK, parse the JSON body of the response
-                return response.json();
-            })
-            .then(result => {
-                // This block runs if the JSON was successfully parsed
-                resultDiv.textContent = `Predicted Score: ${result.predicted_score}%`;
-                resultDiv.className = 'success';
-            })
-            .catch(error => {
-                // This block runs if there was a network error or if the server response was not OK
-                resultDiv.textContent = `Error: Could not get a prediction. Please check the console.`;
-                resultDiv.className = 'error';
-                console.error('Fetch Error:', error);
-            });
-        });
-    </script>
+    <!-- Notice: The <script> tag is completely gone! -->
 </body>
 </html>

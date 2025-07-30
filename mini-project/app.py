@@ -1,59 +1,41 @@
-from flask import Flask, request, jsonify
-from flask_cors import CORS
+# We need redirect and url_for to send the user back to the main page
+from flask import Flask, request, render_template, redirect, url_for
 import joblib
 import numpy as np
-import json # Import the json library
 
 app = Flask(__name__)
-CORS(app)
 
 try:
     model = joblib.load('grade_predictor_model.pkl')
-    print("--- Server Started: Model loaded successfully. ---")
-except Exception as e:
-    print(f"FATAL ERROR: Could not load model. Error: {e}")
+except FileNotFoundError:
+    print("FATAL ERROR: grade_predictor_model.pkl not found. Please run train_model.py first.")
     exit()
 
-@app.route('/predict', methods=['POST'])
+@app.route('/')
+def home():
+    return render_template('index.html')
+
+# --- THIS IS THE UPDATED PART ---
+# The /predict route now accepts both POST and GET methods
+@app.route('/predict', methods=['POST', 'GET'])
 def predict():
-    print("\n--- Received a new request ---")
-    try:
-        data = request.get_json()
-        print(f"1. Received raw data: {data}")
-
-        # --- Data Extraction ---
-        target_sem = float(data['target_semester'])
-        prev_sem_1 = float(data['prev_sem_1_score'])
-        prev_sem_2 = float(data['prev_sem_2_score'])
-        study_hours = float(data['study_hours'])
-        attendance = float(data['attendance'])
-        print("2. Data successfully converted to numbers.")
-
-        # --- Prediction ---
-        features = np.array([[target_sem, prev_sem_1, prev_sem_2, study_hours, attendance]])
-        prediction_result = model.predict(features)
-        print(f"3. Model prediction raw output: {prediction_result}, Type: {type(prediction_result)}")
-
-        # --- Data Type Conversion (Robust Fix) ---
-        # Convert the entire numpy array to a standard Python list
-        prediction_list = prediction_result.tolist()
-        # Get the first (and only) number from the list
-        score = prediction_list[0]
-        print(f"4. Converted to Python list: {prediction_list}, Extracted score: {score}")
-        
-        # Round the final score
-        final_score = round(score, 2)
-        print(f"5. Final rounded score: {final_score}")
-
-        # --- Create JSON Response ---
-        response_data = {'predicted_score': final_score}
-        print(f"6. Preparing to send this JSON back to browser: {response_data}")
-        
-        return jsonify(response_data)
-
-    except Exception as e:
-        print(f"!!! AN ERROR OCCURRED: {e} !!!")
-        return jsonify({'error': 'An error occurred on the server.'}), 500
+    # If the request is a POST, it means the form was submitted.
+    if request.method == 'POST':
+        try:
+            form_data = [float(x) for x in request.form.values()]
+            prediction = model.predict([form_data])
+            score = round(prediction[0], 2)
+            return render_template('result.html', score=score)
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            return "An error occurred. Please go back and try again."
+    
+    # If the request is a GET, it means someone refreshed the page.
+    # We will redirect them back to the main form page ('home').
+    else:
+        return redirect(url_for('home'))
 
 if __name__ == '__main__':
+    print("--- Server is starting... ---")
+    print("Open your browser and go to: http://127.0.0.1:5000")
     app.run(debug=True, port=5000)
