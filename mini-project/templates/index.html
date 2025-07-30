@@ -12,28 +12,36 @@
             align-items: center;
             min-height: 100vh;
             margin: 0;
-            background-color: #f0f2f5;
+            background-color: #caf0f8;
         }
         .container {
-            background: white;
+            background: #457b9d;
             padding: 2rem 3rem;
             border-radius: 12px;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
             text-align: center;
             width: 100%;
             max-width: 450px;
         }
         h1 {
-            color: #1c1e21;
+            font-size: 1rem;
+            color: #f1faee;
+            margin-bottom: 15px;
+            font-family: cursive;
         }
         .input-group {
             margin-bottom: 1.25rem;
             text-align: left;
+            font-family: cursive;
+            font-weight: 20;
+        }
+        #target_semester{
+            font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
         }
         label {
             display: block;
             margin-bottom: 5px;
-            color: #606770;
+            color: #f1faee;
             font-weight: 600;
         }
         input, select {
@@ -48,19 +56,21 @@
             padding: 12px;
             border: none;
             border-radius: 6px;
-            background-color: #007bff;
+            background-color: #1d3557;
             color: white;
-            font-size: 1rem;
+            font-family: cursive;
+            font-size: 1.2rem;
             font-weight: bold;
             cursor: pointer;
             margin-top: 1rem;
         }
         button:hover {
-            background-color: #0069d9;
+            color: #1d3557;
+            background-color: #caf0f8;
         }
     </style>
 </head>
-<body>
+<body> 
     <div class="container">
         <h1>Semester Score Predictor</h1>
         
@@ -79,19 +89,19 @@
                 </select>
             </div>
             <div class="input-group">
-                <label for="prev_sem_1">Previous Semester Score (%):</label>
+                <label for="prev_sem_1">Last Semester Score (%):</label>
                 <input type="number" id="prev_sem_1" name="prev_sem_1_score" required>
             </div>
             <div class="input-group">
-                <label for="prev_sem_2">Score Two Semesters Ago (%):</label>
+                <label for="prev_sem_2">Semester Before Last Score (%):</label>
                 <input type="number" id="prev_sem_2" name="prev_sem_2_score" required>
             </div>
             <div class="input-group">
-                <label for="study_hours">Planned Study Hours Per Day:</label>
+                <label for="study_hours">How many hours do you study per day:</label>
                 <input type="number" id="study_hours" name="study_hours" step="0.5" required>
             </div>
             <div class="input-group">
-                <label for="attendance">Expected Attendance (%):</label>
+                <label for="attendance"> Your Attendance (%):</label>
                 <input type="number" id="attendance" name="attendance" required>
             </div>
             <button type="submit">Predict My Score</button>
