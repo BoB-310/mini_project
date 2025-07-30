@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grade Predictor</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f0f2f5;
+        }
+        .container {
+            background: white;
+            padding: 2rem 3rem;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 100%;
+            max-width: 450px;
+        }
+        h1 {
+            color: #1c1e21;
+        }
+        .input-group {
+            margin-bottom: 1.25rem;
+            text-align: left;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #606770;
+            font-weight: 600;
+        }
+        input, select { /* Added select here */
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #dddfe2;
+            border-radius: 6px;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            background-color: #007bff;
+            color: rgb(255, 255, 255);
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+        button:hover {
+            background-color: #3300d9;
+        }
+        #result {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            display: none; /* Hidden by default */
+        }
+        .success {
+            background-color: #e9f5e9;
+            color: #2b642b;
+            display: block;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Semester Score Predictor</h1>
+        <form id="prediction-form">
+            <!-- THIS IS THE NEW DROPDOWN MENU -->
+            <div class="input-group">
+                <label for="target_semester">Which semester do you want to predict?</label>
+                <select id="target_semester" required>
+                    <option value="3">3rd Semester</option>
+                    <option value="4">4th Semester</option>
+                    <option value="5">5th Semester</option>
+                    <option value="6">6th Semester</option>
+                    <option value="7">7th Semester</option>
+                    <option value="8">8th Semester</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="prev_sem_1"> Your last semester Score (%):</label>
+                <input type="number" id="prev_sem_1" required>
+            </div>
+            <div class="input-group">
+                <label for="prev_sem_2">Your last to last Semesters Ago (%):</label>
+                <input type="number" id="prev_sem_2" required>
+            </div>
+            <div class="input-group">
+                <label for="study_hours"> how much Hours do you study Per Day:</label>
+                <input type="number" id="study_hours" step="0.5" required>
+            </div>
+            <div class="input-group">
+                <label for="attendance">Your average Attendance (%):</label>
+                <input type="number" id="attendance" required>
+            </div>
+            <button type="submit">Predict My Score</button>
+        </form>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        const form = document.getElementById('prediction-form');
+        const resultDiv = document.getElementById('result');
+
+        form.addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            // The data object now includes the new 'target_semester' field
+            const data = {
+                target_semester: document.getElementById('target_semester').value,
+                prev_sem_1_score: document.getElementById('prev_sem_1').value,
+                prev_sem_2_score: document.getElementById('prev_sem_2').value,
+                study_hours: document.getElementById('study_hours').value,
+                attendance: document.getElementById('attendance').value
+            };
+
+            try {
+                const response = await fetch('http://127.0.0.1:5000/predict', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    resultDiv.textContent = `Predicted Score: ${result.predicted_score}%`;
+                    resultDiv.className = 'success';
+                } else {
+                    throw new Error(result.error || 'An unknown error occurred.');
+                }
+
+            } catch (error) {
+                resultDiv.textContent = `Error: Could not connect to the server. Is it running?`;
+                resultDiv.className = 'error';
+                console.error('Fetch Error:', error);
+            }
+        });
+    </script>
+</body>
+</html>
