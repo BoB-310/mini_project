@@ -43,11 +43,25 @@ def predict():
 
         if score<=0:
             score=0
+        
+        if score>=100:
+            score=100
 
+        if score<=0 :
+            message="beta kyu nai horahi padhai"
         # 2. Check the score and create a message if needed
-        if score <= 40: # Let's use a more realistic threshold like 40
-            score = max(0, score) # Ensure score doesn't go below 0
-            message = "This is a low score. You may need to significantly increase your study hours and attendance."
+        elif score>0 and score<=40: # Let's use a more realistic threshold like 40
+            # score = max(0, score) # Ensure score doesn't go below 0
+            message = "bete padhai ke sath pooja pat karo roj mandir jao college ke phele ya bad🙏🏻"
+        elif score>40 and score<=70:
+            message="badhiya jaa rhe ho bs thodi aur mehnat karo laksh mil jayega"
+        
+        elif score>70 and score<=90:
+            message="wah beta bohot hi badhiya keep it up"
+        
+        elif score>90 and score<=100:
+            message="itne mere nai aate, out of syllabus hai tips mere liye"
+
 
         # 3. Pass BOTH the score and the message to the result page
         return render_template('result.html', score=score, message=message)

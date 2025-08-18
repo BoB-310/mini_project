@@ -31,7 +31,7 @@
         }
         .score {
             font-family: cursive;
-            font-size: 4rem;
+            font-size: 80px;
             font-weight: bold;
             color: #f1faee;
             margin: 1rem 0;
@@ -62,9 +62,11 @@
 
         <p class="score">{{ score }}%</p>
 
+        <h2><i>Tips that might help you to improve</i></h2>
+
         {% if message %}
         <!-- This new block will only appear if a message exists -->
-        <p style="color: #c1121f; font-weight: bold; margin-top: 1rem;">{{ message }}</p>
+        <p style="color: #123bc1; font-weight: bold; margin-top: 1rem;">{{ message }}</p>
         {% endif %}
 
         <a href="/">Predict Another Score</a>
