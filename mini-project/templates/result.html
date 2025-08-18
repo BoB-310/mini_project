@@ -62,7 +62,11 @@
 
         <p class="score">{{ score }}%</p>
 
-        <!-- This is the corrected link -->
+        {% if message %}
+        <!-- This new block will only appear if a message exists -->
+        <p style="color: #c1121f; font-weight: bold; margin-top: 1rem;">{{ message }}</p>
+        {% endif %}
+
         <a href="/">Predict Another Score</a>
     </div>
 </body>

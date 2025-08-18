@@ -38,12 +38,19 @@ def predict():
         prediction = model.predict([features])
         score = round(prediction[0], 2)
 
+        # 1. Create an empty message variable
+        message = "" 
+
         if score<=0:
             score=0
 
-        # 4. Render the result page
-        return render_template('result.html', score=score)
+        # 2. Check the score and create a message if needed
+        if score <= 40: # Let's use a more realistic threshold like 40
+            score = max(0, score) # Ensure score doesn't go below 0
+            message = "This is a low score. You may need to significantly increase your study hours and attendance."
 
+        # 3. Pass BOTH the score and the message to the result page
+        return render_template('result.html', score=score, message=message)
     except ValueError:
         # This will catch errors if the user enters text instead of numbers
         return "Invalid input. Please enter numbers only."
