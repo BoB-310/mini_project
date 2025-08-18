@@ -38,6 +38,9 @@ def predict():
         prediction = model.predict([features])
         score = round(prediction[0], 2)
 
+        if score<=0:
+            score=0
+
         # 4. Render the result page
         return render_template('result.html', score=score)
 
